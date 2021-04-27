@@ -1,0 +1,17 @@
+//NMEC : 93346
+
+// Pesquisando todos os vídeos de determinado autor 
+> create index on video(author);
+> select * from video where author = 'martinss@gmail.com';
+
+// Pesquisando comentários por utilizador, ordenando inversamente pela data
+> select * from comment where author = 'marianasoares@gmail.com';
+
+// Pesquisando comentários por vídeo, ordenando inversamente pela data
+> create index on comment(video_id);
+> select * from comment where video_id = 19;
+
+// Pesquisando rating médio de um vídeo e quantas vezes foi votado
+> create index on rating(video_id);
+> select video_id, avg(value) as avg_value, count(video_id) as no_reviews from rating where video_id=5;
+

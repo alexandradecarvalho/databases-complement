@@ -1,0 +1,405 @@
+//NMEC : 93346
+
+// Aqui vemos as BDs disponíveis à partida: admin, config e local. Vemos também que estão vazias (0 BG)
+
+> show dbs
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+
+// Aqui, entramos na BS "test". Neste caso, como ela não existia, foi criada
+
+> use test
+switched to db test
+
+// Podemos verificar que estamos na base de dados que criamos
+
+> db
+test
+
+// No entanto, se repetirmos o primeiro comando vemos que a BD nova ainda não aparece: isto é porque ainda não tem documentos
+
+> show dbs
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+
+// Estando dentro de uma DB, podemos inserir nela uma coleção de registos
+
+> db.createCollection("myfirstCollection")
+{ "ok" : 1 }
+
+// O comando seguinte mostra todas as coleções dentro da presente BD. Como a DB é nova, tem apenas a coleção que acabámos
+//de criar
+
+> show collections
+myfirstCollection
+
+// Ao criar uma coleção podemos também especificar parâmetros: capped: true impõe à coleção um tamanho máximo de bytes,
+// especificado no argumento size: *valor*. O argumento autoIndexId: true garante que todos os elementos da coleção terão um
+// valor de index, sem termos de o escrever manualmente e o argumento max indica o número máximo de elementos que a coleção
+// poderá ter
+
+> db.createCollection("mysecondCollection", {capped: true, autoIndexId: true, size: 6142800, max: 10000})
+{
+	"note" : "The autoIndexId option is deprecated and will be removed in a future release",
+	"ok" : 1
+}
+
+// No entanto, não precisamos de criar explicitamente uma coleção. Ao inserir um documento numa coleção inexistente, esta é
+// criada
+
+> db.notcreated.insert({"title":"creator"})
+WriteResult({ "nInserted" : 1 })
+
+// Se repetirmos o comando para visualizar as coleções, podemos ver que agora já encontramos a coleção que acabámos de criar
+
+> show collections
+myfirstCollection
+mysecondCollection
+notcreated
+
+// Para apagar uma coleção, tudo o que necessitamos de fazer é o seguinte comando:
+
+> db.notcreated.drop()
+true
+
+// Podemos observar que o comando teve sucesso
+
+> show collections
+myfirstCollection
+mysecondCollection
+
+// Equivalentemente, para apagarmos a BD em que estamos atualmente, usamos o seguinte comando:
+
+> db.dropDatabase()
+{ "dropped" : "test", "ok" : 1 }
+
+// Podemos observar que o comando teve sucesso porque voltámos à lista original
+
+> show dbs
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+
+// A seguir, criamos uma nova BD de favoritos e inserimos um elemento à coleção "movies", através de insert(), e
+// especificamos os seus atributos
+
+> use myfavouritemovies
+switched to db myfavouritemovies
+
+> db.movies.insert({
+... title: "Memento",
+... description: "Leonard is an ex-insurance investigator who can no longer build new memories while he attempts to find the murderer of his wife, which is the last thing he remembers. One story line moves forward in time while the other tells the story backwards revealing more each time.",
+... director: "Christopher Nolan",
+... genres: ['mistery','thriller','neo noir', 'drama', 'crime']
+... })
+WriteResult({ "nInserted" : 1 })
+
+// Outra forma de inserir um único elemento na lista é usarmos o método específico insertOne()
+
+> db.movies.insertOne({
+... title: "Reservoir Dogs",
+... description: "The tale of a group of thugs who rob a diamond store. But the plan starts to fall apart and only for of them survive with one being seriously wounded. It is suspected that there is a police informant in the group, but no one knows who it is.",
+... director: "Quentin Tarantino",
+... genres: ['adventure', 'mistery', 'drama', 'crime']
+... })
+{
+	"acknowledged" : true,
+	"insertedId" : ObjectId("5f9879580dbd2a0910114919")
+}
+
+// Como foi sugerido anteriormente, o método insert() é genérico e permite inserir um elemento ou então uma lista de
+// elementos, para não os inserirmos um a um
+
+ > db.movies.insert([ 
+... {
+... title: "Inception",
+... description: "A theif who steals corporate secrets through the use of dream-sharing technology is given the reverse task of planting an idea into the mind of a CEO.",
+... director: "Christopher Nolan",
+... genres: ['action', 'sci-fi', 'drama', 'adventure']},
+... {
+... title: "12 angry men",
+... description: "The verdict of a seemingly open and shut case lies in the hands of twelve jury members. The verdict is obvious, guilty. But to one, there's more than meets the eye. What else might be hiding in the details of this case? Will an inncoent man be put to death? Or will a guilty man be spared?",
+... director: "Sidney Lumet",
+... genres: ['drama', 'crime']}]
+... )
+BulkWriteResult({
+	"writeErrors" : [ ],
+	"writeConcernErrors" : [ ],
+	"nInserted" : 2,
+	"nUpserted" : 0,
+	"nMatched" : 0,
+	"nModified" : 0,
+	"nRemoved" : 0,
+	"upserted" : [ ]
+})
+
+// Mas também podemos usar uma versão deste mesmo método para múltiplos inserts: insertMany()
+
+> db.movies.insertMany(
+... [
+... {
+... title: "Amelie",
+... description: "Amelie is an innocent and naive girl in Paris with her own sense of justice. She decides to help those around her and, along the way, she discovers love.",
+... director:"Jean-Pierre Jeunet",
+... genres: ['romance', 'commedy']},
+... {
+... title: "The usual suspects",
+... description: "A sole survivor tells of the twisty events leading up to a horrific gun battle on a boat, which began when five criminals met at a seemingly random police lineup.",
+... director: "Bryan Singer",
+... genres: ['mistery', 'neo noir', 'thriller', 'drama', 'crime']}
+... ]
+... )
+{
+	"acknowledged" : true,
+	"insertedIds" : [
+		ObjectId("5f987efae19a290e3acc51b5"),
+		ObjectId("5f987efae19a290e3acc51b6")
+	]
+}
+
+// Uma vez inseridos todos estes records, podemos pesquisá-los. Para listar todos os records:
+
+> db.movies.find()
+{ "_id" : ObjectId("5f987efae19a290e3acc51b5"), "title" : "Amelie", "description" : "Amelie is an innocent and naive girl in Paris with her own sense of justice. She decides to help those around her and, along the way, she discovers love.", "director" : "Jean-Pierre Jeunet", "genres" : [ "romance", "commedy" ] }
+{ "_id" : ObjectId("5f987efae19a290e3acc51b6"), "title" : "The usual suspects", "description" : "A sole survivor tells of the twisty events leading up to a horrific gun battle on a boat, which began when five criminals met at a seemingly random police lineup.", "director" : "Bryan Singer", "genres" : [ "mistery", "neo noir", "thriller", "drama", "crime" ] }
+{ "_id" : ObjectId("5f987f2ee19a290e3acc51b7"), "title" : "Reservoir Dogs", "description" : "The tale of a group of thugs who rob a diamond store. But the plan starts to fall apart and only for of them survive with one being seriously wounded. It is suspected that there is a police informant in the group, but no one knows who it is.", "director" : "Quentin Tarantino", "genres" : [ "adventure", "mistery", "drama", "crime" ] }
+{ "_id" : ObjectId("5f987f3ae19a290e3acc51b8"), "title" : "Reservoir Dogs", "description" : "The tale of a group of thugs who rob a diamond store. But the plan starts to fall apart and only for of them survive with one being seriously wounded. It is suspected that there is a police informant in the group, but no one knows who it is.", "director" : "Quentin Tarantino", "genres" : [ "adventure", "mistery", "drama", "crime" ] }
+{ "_id" : ObjectId("5f987f44e19a290e3acc51b9"), "title" : "Inception", "description" : "A theif who steals corporate secrets through the use of dream-sharing technology is given the reverse task of planting an idea into the mind of a CEO.", "director" : "Christopher Nolan", "genres" : [ "action", "sci-fi", "drama", "adventure" ] }
+{ "_id" : ObjectId("5f987f44e19a290e3acc51ba"), "title" : "12 angry men", "description" : "The verdict of a seemingly open and shut case lies in the hands of twelve jury members. The verdict is obvious, guilty. But to one, there's more than meets the eye. What else might be hiding in the details of this case? Will an inncoent man be put to death? Or will a guilty man be spared?", "director" : "Sidney Lumet", "genres" : [ "drama", "crime" ] }
+{ "_id" : ObjectId("5f987f56e19a290e3acc51bb"), "title" : "Memento", "description" : "Leonard is an ex-insurance investigator who can no longer build new memories while he attempts to find the murderer of his wife, which is the last thing he remembers. One story line moves forward in time while the other tells the story backwards revealing more each time.", "director" : "Christopher Nolan", "genres" : [ "mistery", "thriller", "neo noir", "drama", "crime" ] }
+
+// Para ver a informação de forma indentada acrescentamos a qualquer comando .pretty()
+
+> db.movies.find().pretty()
+{
+	"_id" : ObjectId("5f987efae19a290e3acc51b5"),
+	"title" : "Amelie",
+	"description" : "Amelie is an innocent and naive girl in Paris with her own sense of justice. She decides to help those around her and, along the way, she discovers love.",
+	"director" : "Jean-Pierre Jeunet",
+	"genres" : [
+		"romance",
+		"commedy"
+	]
+}
+{
+	"_id" : ObjectId("5f987efae19a290e3acc51b6"),
+	"title" : "The usual suspects",
+	"description" : "A sole survivor tells of the twisty events leading up to a horrific gun battle on a boat, which began when five criminals met at a seemingly random police lineup.",
+	"director" : "Bryan Singer",
+	"genres" : [
+		"mistery",
+		"neo noir",
+		"thriller",
+		"drama",
+		"crime"
+	]
+}
+{
+	"_id" : ObjectId("5f987f2ee19a290e3acc51b7"),
+	"title" : "Reservoir Dogs",
+	"description" : "The tale of a group of thugs who rob a diamond store. But the plan starts to fall apart and only for of them survive with one being seriously wounded. It is suspected that there is a police informant in the group, but no one knows who it is.",
+	"director" : "Quentin Tarantino",
+	"genres" : [
+		"adventure",
+		"mistery",
+		"drama",
+		"crime"
+	]
+}
+{
+	"_id" : ObjectId("5f987f3ae19a290e3acc51b8"),
+	"title" : "Reservoir Dogs",
+	"description" : "The tale of a group of thugs who rob a diamond store. But the plan starts to fall apart and only for of them survive with one being seriously wounded. It is suspected that there is a police informant in the group, but no one knows who it is.",
+	"director" : "Quentin Tarantino",
+	"genres" : [
+		"adventure",
+		"mistery",
+		"drama",
+		"crime"
+	]
+}
+{
+	"_id" : ObjectId("5f987f44e19a290e3acc51b9"),
+	"title" : "Inception",
+	"description" : "A theif who steals corporate secrets through the use of dream-sharing technology is given the reverse task of planting an idea into the mind of a CEO.",
+	"director" : "Christopher Nolan",
+	"genres" : [
+		"action",
+		"sci-fi",
+		"drama",
+		"adventure"
+	]
+}
+{
+	"_id" : ObjectId("5f987f44e19a290e3acc51ba"),
+	"title" : "12 angry men",
+	"description" : "The verdict of a seemingly open and shut case lies in the hands of twelve jury members. The verdict is obvious, guilty. But to one, there's more than meets the eye. What else might be hiding in the details of this case? Will an inncoent man be put to death? Or will a guilty man be spared?",
+	"director" : "Sidney Lumet",
+	"genres" : [
+		"drama",
+		"crime"
+	]
+}
+{
+	"_id" : ObjectId("5f987f56e19a290e3acc51bb"),
+	"title" : "Memento",
+	"description" : "Leonard is an ex-insurance investigator who can no longer build new memories while he attempts to find the murderer of his wife, which is the last thing he remembers. One story line moves forward in time while the other tells the story backwards revealing more each time.",
+	"director" : "Christopher Nolan",
+	"genres" : [
+		"mistery",
+		"thriller",
+		"neo noir",
+		"drama",
+		"crime"
+	]
+}
+
+// Da mesma maneira que o comando anterior, podemos especificar que queremos ver apenas um record. Para pesquisar de entre
+// os elementos da lista, podemos atribuir valores desejados nos respetivos atributos, e apenas listar de entre estes
+
+> db.movies.findOne({director: "Christopher Nolan"})
+{
+	"_id" : ObjectId("5f987f44e19a290e3acc51b9"),
+	"title" : "Inception",
+	"description" : "A theif who steals corporate secrets through the use of dream-sharing technology is given the reverse task of planting an idea into the mind of a CEO.",
+	"director" : "Christopher Nolan",
+	"genres" : [
+		"action",
+		"sci-fi",
+		"drama",
+		"adventure"
+	]
+}
+
+// Neste comando podemos colocar mais do que um parâmetro de seleção através dos operadores binários: $and, $or, $nor, $not.
+// Podemos também comparar valores com $eg (=), $lt (<), $lte (<=), $gt (>), $gte (>=), $ne (!=), $in para procurar em
+// arrays e por fim $nin, para procurar em valores que não estejam no array
+
+> db.movies.find({$and: [{director: "Christopher Nolan"}, {title: "Inception"}]})
+{ "_id" : ObjectId("5f987f44e19a290e3acc51b9"), "title" : "Inception", "description" : "A theif who steals corporate secrets through the use of dream-sharing technology is given the reverse task of planting an idea into the mind of a CEO.", "director" : "Christopher Nolan", "genres" : [ "action", "sci-fi", "drama", "adventure" ] }
+
+// Outro exemplo. Aqui vemos claramente o resultado do or: ambos os filmes de Nolan e um filme que não é dele mas cujo
+// título é "12 angry men"
+
+> db.movies.find({$or: [{title: "12 angry men"},{director: "Christopher Nolan"}]})
+{ "_id" : ObjectId("5f987f44e19a290e3acc51b9"), "title" : "Inception", "description" : "A theif who steals corporate secrets through the use of dream-sharing technology is given the reverse task of planting an idea into the mind of a CEO.", "director" : "Christopher Nolan", "genres" : [ "action", "sci-fi", "drama", "adventure" ] }
+{ "_id" : ObjectId("5f987f44e19a290e3acc51ba"), "title" : "12 angry men", "description" : "The verdict of a seemingly open and shut case lies in the hands of twelve jury members. The verdict is obvious, guilty. But to one, there's more than meets the eye. What else might be hiding in the details of this case? Will an inncoent man be put to death? Or will a guilty man be spared?", "director" : "Sidney Lumet", "genres" : [ "drama", "crime" ] }
+{ "_id" : ObjectId("5f987f56e19a290e3acc51bb"), "title" : "Memento", "description" : "Leonard is an ex-insurance investigator who can no longer build new memories while he attempts to find the murderer of his wife, which is the last thing he remembers. One story line moves forward in time while the other tells the story backwards revealing more each time.", "director" : "Christopher Nolan", "genres" : [ "mistery", "thriller", "neo noir", "drama", "crime" ] }
+
+// Para além de podermos selecionar records, podemos também alterá-los, através da função update e do $set
+
+> db.movies.update({title: '12 angry men'},{$set: {title: 'twelve angry men'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+// Observamos no resultado abaixo que conseguimos alterar o título do filme
+
+> db.movies.find({director: "Sidney Lumet"}).pretty()
+{
+	"_id" : ObjectId("5f987f44e19a290e3acc51ba"),
+	"title" : "twelve angry men",
+	"description" : "The verdict of a seemingly open and shut case lies in the hands of twelve jury members. The verdict is obvious, guilty. But to one, there's more than meets the eye. What else might be hiding in the details of this case? Will an inncoent man be put to death? Or will a guilty man be spared?",
+	"director" : "Sidney Lumet",
+	"genres" : [
+		"drama",
+		"crime"
+	]
+}
+
+// Podemos querer fazer o mesmo update para diversos records com um mesmo atributo em comum. Para fazer isso
+// acrescentaríamos apenas:
+
+db.movies.update({title: '12 angry men'},{$set: {title: 'twelve angry men'}}, {multi:true})
+
+// Podemos também querer listar todos mas mostrar apenas alguns parâmetros, neste caso, como apenas o título está a true (1)
+// apenas ele aparece
+
+> db.movies.find({},{title:1})
+{ "_id" : ObjectId("5f987efae19a290e3acc51b5"), "title" : "Amelie" }
+{ "_id" : ObjectId("5f987efae19a290e3acc51b6"), "title" : "The usual suspects" }
+{ "_id" : ObjectId("5f987f2ee19a290e3acc51b7"), "title" : "Reservoir Dogs" }
+{ "_id" : ObjectId("5f987f3ae19a290e3acc51b8"), "title" : "Reservoir Dogs" }
+{ "_id" : ObjectId("5f987f44e19a290e3acc51b9"), "title" : "Inception" }
+{ "_id" : ObjectId("5f987f44e19a290e3acc51ba"), "title" : "twelve angry men" }
+{ "_id" : ObjectId("5f987f56e19a290e3acc51bb"), "title" : "Memento" }
+
+// O atributo id aparece sempre, mesmo sem ser listado a true. No entanto, podemos retira-lo explicitamente, colocando-o a 0
+
+> db.movies.find({},{_id:0, title:1, director: 1})
+{ "title" : "Amelie", "director" : "Jean-Pierre Jeunet" }
+{ "title" : "The usual suspects", "director" : "Bryan Singer" }
+{ "title" : "Reservoir Dogs", "director" : "Quentin Tarantino" }
+{ "title" : "Reservoir Dogs", "director" : "Quentin Tarantino" }
+{ "title" : "Inception", "director" : "Christopher Nolan" }
+{ "title" : "twelve angry men", "director" : "Sidney Lumet" }
+{ "title" : "Memento", "director" : "Christopher Nolan" }
+
+// Podemos também escolher quantos elementos queremos mostrar, se não os quisemos todos. Vamos escolher os 3 primeiros:
+
+> db.movies.find({},{_id:0, title:1, director: 1}).limit(3)
+{ "title" : "Amelie", "director" : "Jean-Pierre Jeunet" }
+{ "title" : "The usual suspects", "director" : "Bryan Singer" }
+{ "title" : "Reservoir Dogs", "director" : "Quentin Tarantino" }
+
+// Se quisermos saltar umas linhas, imaginemos que não queríamos o primeiro record por ser de teste, podemos dar skip em x
+// linhas, nesse caso em apenas 1
+
+> db.movies.find({},{_id:0, title:1, director: 1}).limit(3).skip(1)
+{ "title" : "The usual suspects", "director" : "Bryan Singer" }
+{ "title" : "Reservoir Dogs", "director" : "Quentin Tarantino" }
+{ "title" : "Reservoir Dogs", "director" : "Quentin Tarantino" }
+
+// Podemos listar os records de forma ordenada, de acordo com um dos parâmetros e de forma crescente ou decrescente. Vamos
+// experimentar ordenar os filmes alfabeticamente
+
+> db.movies.find({},{_id:0, title:1, director: 1}).sort({title:1})
+{ "title" : "Amelie", "director" : "Jean-Pierre Jeunet" }
+{ "title" : "Inception", "director" : "Christopher Nolan" }
+{ "title" : "Memento", "director" : "Christopher Nolan" }
+{ "title" : "Reservoir Dogs", "director" : "Quentin Tarantino" }
+{ "title" : "Reservoir Dogs", "director" : "Quentin Tarantino" }
+{ "title" : "The usual suspects", "director" : "Bryan Singer" }
+{ "title" : "twelve angry men", "director" : "Sidney Lumet" }
+
+// Agora façamos o mesmo mas por ordem decrescente do realizador:
+
+> db.movies.find({},{_id:0, title:1, director: 1}).sort({director:-1})
+{ "title" : "twelve angry men", "director" : "Sidney Lumet" }
+{ "title" : "Reservoir Dogs", "director" : "Quentin Tarantino" }
+{ "title" : "Reservoir Dogs", "director" : "Quentin Tarantino" }
+{ "title" : "Amelie", "director" : "Jean-Pierre Jeunet" }
+{ "title" : "Inception", "director" : "Christopher Nolan" }
+{ "title" : "Memento", "director" : "Christopher Nolan" }
+{ "title" : "The usual suspects", "director" : "Bryan Singer" }
+
+// Para criar índices usamos praticamente a mesma sintaxe no método createIndex()
+
+> db.movies.createIndex({title:1, description:-1})
+{
+	"createdCollectionAutomatically" : false,
+	"numIndexesBefore" : 1,
+	"numIndexesAfter" : 2,
+	"ok" : 1
+}
+
+// Podemos confirmar que os índices foram criados
+
+> db.movies.getIndexes()
+[
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_"
+	},
+	{
+		"v" : 2,
+		"key" : {
+			"title" : 1,
+			"description" : -1
+		},
+		"name" : "title_1_description_-1"
+	}
+]

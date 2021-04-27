@@ -1,0 +1,95 @@
+//NMEC : 93346
+
+#1
+db.rest.find()
+
+#2
+db.rest.find({}, {restaurant_id:1, nome: 1, localidade:1, gastronomia:1})
+
+#3
+db.rest.find({}, {_id: 0, restaurant_id:1, nome: 1, localidade:1, address: {zipcode:1}})
+
+#4 
+// Resultado: 309
+db.rest.find({localidade: "Bronx"}).count()
+
+#5
+db.rest.find({localidade: "Bronx"}).sort({nome: 1}).limit(15)
+
+#6
+db.rest.find({'grades.score' : {$gt: 85}})
+
+#7
+db.rest.find({ grades: { $elemMatch: { score: { $lte: 100 }, score: { $gte: 80 } } } })
+
+#8
+db.rest.find({'address.coord.0' : {$lt: -95.7}})
+
+#9
+db.rest.find({ $and: [ {gastronomia: {$ne: 'American'}}, {'grades.score' : {$gt : 70}}, {'address.coord.0' : {$lt: -65}} ] })
+
+#10
+db.rest.find({nome : {$regex : "Wil.*"}}, {restaurant_id:1, localidade:1, gastronomia:1})
+
+#11
+db.rest.find({ $and: [{localidade : "Bronx"}, {$or: [{gastronomia: "American"}, {gastronomia: "Chinese"}] }] }, {nome:1, localidade:1, gastronomia:1})
+
+#12
+db.rest.find({$or: [{localidade: "Staten Island"},{localidade: "Queens"},{localidade: "Brooklyn"}] }, {restaurant_id:1, nome:1, localidade:1, gastronomia:1})
+
+#13
+db.rest.find({'grades.score': { $not: {$gt : 3} } }, {nome:1, localidade:1, score:1, gastronomia:1})
+
+#14
+db.rest.find({ grades: { $elemMatch: {grade: "A", score: 10, date: ISODate("2014-08-11T00:00:00Z")} } },{nome:1, grades:1})
+
+#15
+db.rest.find({'grades.1.grade' : "A", 'grades.1.date': ISODate("2014-08-11T00:00:00Z")}}, {restaurant_id:1, nome:1, score:1})
+
+#16
+db.rest.find({$and: [{'address.coord.1' : {$gt : 42}},{'address.coord.1' : {$lte : 52}}] },{restaurant_id:1, nome:1, address:1})
+
+#17
+db.rest.find({},{nome:1, gastronomia:1, localidade:1}).sort({gastronomia:1, localidade:-1})
+
+#18
+db.rest.find({$and: [{localidade: "Brooklyn"},{gastronomia : {$ne : 'American'}}, {'grades.grade' : "A"}] },{nome:1, localidade:1, grade:1, gastronomia:1}).sort({gastronomia:-1})
+
+#19
+db.rest.aggregate([{ $group: { _id: "$localidade", no_restaurantes : {$sum : 1}} }])
+
+#20
+db.rest.aggregate([{ $addFields : {avg_score : {$avg : "$grades.score"}}}, { $match : {avg_score : {$gt : 30}}} ])
+
+#21
+db.rest.aggregate([{ $addFields : {sum_score : {$sum : "$grades.score"}}}, { $match : {sum_score : {$gt : 75}}}, {$match : {gastronomia : "American"}}, {$match : {'address.coord.0' : {$lt: -60}}} ])
+
+#22
+db.rest.aggregate([{$group : {_id: "$gastronomia", no_restaurantes : {$sum : 1}}}, {$sort : {no_restaurantes: -1}}])
+
+#23
+// Resultado : 9
+db.rest.aggregate([{$match : {'address.rua' : "Flatbush Avenue"}},{$group : {_id : "$gastronomia" }},{$count : "no_gastronomias"}])
+
+#24
+db.rest.aggregate([{$group : {_id: "$address.rua", no_restaurantes : {$sum : 1}}}, {$sort : {no_restaurantes: -1}}])
+
+#26
+// Nenhum score é ímpar menor ou igual a 5 
+db.rest.find({'grades.score': { $nin: [1,3,5] } })
+
+#27
+// Mostrar apenas o nome de todos os restaurantes por ordem decrescente
+db.rest.find({},{_id:0, nome: 1}).sort({nome: -1})
+
+#28
+// Todos os restaurantes excepto os que servem gastronomia Americana ou Chinesa
+db.rest.find({$nor: [{gastronomia: "American"}, {gastronomia: "Chinese"}] })
+
+#29
+// Quantos restaurantes com Alex no nome (recomendo estes restaurantes :) ) - RESULTADO : 2
+db.rest.aggregate([{$match: {nome: {$regex: '.*Alex.*'}}},{$count: 'no_restaurants'}])
+
+#30
+// Todos os restaurantes que têm pelo menos 6 avaliacoes
+//HELP

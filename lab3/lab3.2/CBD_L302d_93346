@@ -1,0 +1,37 @@
+// NMEC : 93346
+
+// Selecionar os últimos 3 comentários introduzidos para um vídeo
+> select * from comment where video_id = 18 limit 3;
+
+// Listar as tags de um vídeo
+> select tags from video where id = 6;
+
+// Listar todos os vídeos com a tag 'Aveiro'
+// Isto apenas seria possível se houvesse uma outra tabela com uma tag como primary key e uma lista de ids de vídeo. Nesse caso:
+> select * from video_by_tag where tag = 'Aveiro';
+
+// Selecionar os últimos 5 eventos de determinado vídeo realizados por um utilizador
+> select * from event where video_id = 8 and email = 'branco@gmail.com' limit 5 allow filtering;
+
+// Listar os vídeos partilhados por um utilizador durante um período de tempo
+> select * from video where author = 'anacarvalho@gmail.com' and sharing_date > '2018-03-03 13:23:00' allow filtering;
+
+// Listar os últimos 10 vídeos por ordem inversa de partilha
+> select * from video limit 10;
+
+// Ver todos os seguidores de um determinado vídeo
+> select * from vid_follower where video_id = 18 allow filtering;
+
+// Todos os comentários dos vídeos que um utilizador está a seguir
+> select * from vid_follower where email = 'meganbg@gmail.com';
+> select * from comment where video_id = 5; 
+> select * from comment where video_id = 16;
+
+// Ver os 5 vídeos com maior rating 
+impossível
+
+// Mostrar os vídeos claramente ordenados
+> select * FROM video where id in (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20);
+
+// Tags existentes e respetivo número de vídeos
+> impossível

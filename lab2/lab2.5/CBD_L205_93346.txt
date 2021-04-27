@@ -1,0 +1,68 @@
+// 93346 
+
+// Alínea c)
+
+#1 - Listar 30 documentos da coleção, apresentando apenas os campos "title", "isbn" e "shortDescription"
+// Aqui o objetivo é mostrar que dá para escolher que campos mostrar e a função limit
+db.books.find({}, {_id: 0, title:1, isbn: 1, shortDescription:1}).limit(30)
+
+#2 - Indicar o total de livros com um número de páginas entre 200 e 300
+// Aqui o objetivo é usar o $and para agregar várias queries juntas, usar os comparadores $lte e $gte com numeros, e usar
+// a função count para obter o número de resultados
+db.books.find({ $and: [ {pageCount: { $lte: 300}},{pageCount: { $gte: 200 } } ] }).count()
+
+#3 - Listando o id, título, status, autores e categorias, indicar os livros de status PUBLISH, c/ menos de 500 páginas, que
+// não são sobre Java em que um dos autores começa por "Chris"
+// Aqui o objetivo é continuar a explorar os comparadores ($lt e $ne) e usar o $regex 
+db.books.find({$and: [{status: "PUBLISH"}, {pageCount: {$lt: 500}}, {categories: {$ne: "Java"}}, {authors: {$regex : "Chris.*"}} ]}, {title:1,status:1, authors:1, categories:1})
+
+#4 - Listar o id, o título, a categoria, o número de páginas e a data de publicação dos livros  sobre Internet ou sobre
+// Web Development e publicados a 15 de outubro de 2010
+// Aqui o objetivo é usar o $or, sobretudo associado ao $and, e usar a data
+db.books.find({$and: [{$or: [{categories: "Internet"}, {categories: "Web Development"}]}, {date: ISODate("2010-10-15T07:00:00Z")}]},{title:1, categories:1, pageCount:1, publishedDate:1})
+
+#5 - Listar o id, título, a descrição completa e o número de páginas dos livros em que o segundo autor começa por "Dan" e
+// ordenar os resultados alfabeticamente (título) e, depois, por ordem crescente do número de paginas
+// Aqui o objetivo foi aceder a uma dada posição de um valor que era array (authors.1) e usar o sort
+db.books.find({'authors.1' : {$regex : "Dan.*"}}, {title:1, longDescription:1, pageCount:1}).sort({title:1, pageCount:1})
+
+#6 - Listar apenas os títulos por ordem decrescente, desde que nenhum livro c/ números certos de centenas de páginas ou c/
+os temas de Internet e Web Development
+// Aqui o objetivo é usar os operadores $nin e $nor e também usar o sort para ordenar de forma decrescente
+db.books.find({$and: [{pageCount: { $nin: [100,200,300,400,500,600,700,800,900]}}, {$nor: [{categories: "Internet"}, {categories: "Web Development"}]} ]}, {_id:0, title:1}).sort({title:-1})
+
+// Alínea d)
+
+#1 - Contar o total de livros em cada status
+// Aqui o objetivo é usar o $group
+db.books.aggregate([{ $group: { _id: "$status", no_books : {$sum : 1}} }])
+
+#2 - Listar cada categoria por ordem decrescente do respetivo número de livros
+// Aqui o objetivo volta a ser usar o $group e o $sort
+db.books.aggregate([{$group : {_id: "$categories", no_books : {$sum : 1}}}, {$sort : {no_books: -1}}])
+
+#3 - Apresentar o número de categorias diferentes em que a palavra "Depth" aparece no título
+// Aqui o objetivo é usar o $match com um $regex, e também o $count
+db.books.aggregate([{$match : {title : {$regex: ".*Depth.*"}}},{$group : {_id : "$categories" }},{$count : "no_categories"}])
+
+#4 - Contar quantos livros têm "love" na descrição
+// Aqui o objetivo é voltar a usar o $match e o $count
+db.books.aggregate([{$match: {longDescription: {$regex: '.*love.*'}}},{$count: 'loving_books'}])
+
+#5 - Listar cada livro mostrando apenas 1 autor de cada vez
+// Aqui o objetivo é utilizar $unwind
+db.books.aggregate([{ $unwind: "$authors"}])
+
+#6 - Quantos livros cada autor escreveu
+// Aqui o objetivo é voltar a utilizar $unwind, agora com um propósito melhor (?)
+db.books.aggregate({ $unwind : "$authors" }, {$group: {_id: "$authors", no_books : {$sum:1}}}] )
+
+
+#7 - Refazendo o ex 5, listar cada livro mostrando 1 autor de cada vez, e apenas mostrar o título e o autor
+// Aqui o objetivo é utilizar $project
+  
+
+#8 - Refazendo o ex número 1 da alínea anterior, listar apenas os campos "title", "isbn" e "shortDescription" dos primeiros 30 livros
+// Aqui o objetivo é utilizar $project e o $limit
+db.books.aggregate([{ $project : { title : 1 , isbn: 1, shortDescription:1 }}, {$limit: 30}])
+

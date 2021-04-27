@@ -1,0 +1,116 @@
+ping
+dbsize
+set testkey hello
+exists testkey
+del testkey
+set testkey hello
+exists testkey
+type testkey
+keys *
+del testkey
+exists testkey
+type testkey
+scan 0
+set testkey hello
+scan 0
+scan 0 match "hell*"
+set book:1 "Infinite Jest"
+get book:1
+set book:1:ReadAction 1
+get book:1:ReadAction
+incr book:1:ReadAction
+get book:1:ReadAction
+incrby book:1:ReadAction 20
+get book:1:ReadAction
+decr book:1:ReadAction
+get book:1:ReadAction
+decrby book:1:ReadAction 5
+get book:1:ReadAction
+get book:1 "Infinite Jest"
+incr book:1 "Infinite Jest"
+mset Person:2 "Kurt Vonnegut" Person:3 "Jane Austen" Person:4 "Mark Twain"
+mget Person:2 Person:3 Person:4
+lpush book:1:comment "This was a fun read"
+lrange book:1:comment 0 -1
+lpush book:1:comment "Way too long!"
+lrange book:1:comment 0 -1
+rpush book:1:comment "Tennis anyone?"
+lrange book:1:comment 0 -1
+lpop book:1:comment
+lrange book:1:comment 0 -1
+rpop book:1:comment
+lrange book:1:comment 0 -1
+rpush Organization:1:members Person:1 Person:2 Person:3 Person:4
+lrange Organization:1:members 0 -1
+ltrim Organization:1:members 0 2
+lrange Organization:1:members 0 -1
+brpop Organization:1:members 5
+lrange Organization:1:members 0 -1
+hset book:3 name "Cats Cradle"
+hget book:3 name
+hmset book:4 name "Slaughterhouse-Five" author "Kurt Vonnegut" copyrightYear 1969 ISBN 29960763
+hmget book:4 author ISBN
+hgetall book:4
+hexists book:4 copyrightYear
+hexists book:4 barcode
+hlen book:4
+hkeys book:4
+hvals book:4
+hdel book:4 copyrightYear
+hgetall book:4
+hset book:4 copyrightYear 1968
+hget book:4 copyrightYear
+hincrby book:4 copyrightYear 1
+hget book:4 coprightYear
+hget book:4 copyrightYear
+set Organization:5 "Beatles"
+sadd Organization:5 member Paul John George Ringo
+sadd Organization:5:member Paul John George Ringo
+smembers Organization:5:member
+sismember Organization:5:member "John"
+sismember Organization:5:member "Ralph"
+scard Organization:5:member
+set Organization:6 "Wings"
+set Organization:7 "Traveling Wilburys"
+sadd Organization:6:member Paul Linda Denny
+sadd Organization:7:member Bob George Jeff Roy Tom
+sunion Organization:5:member Organization:6:member
+sunion Organization:6:member Organization:7:member
+sunion Organization:5:member Organization:6:member Organization:8
+sunion Organization:5:member Organization:6:member Organization:7
+sunion Organization:5:member Organization:6:member Organization:7:member
+sinter Organization:5:member Organization:6:member
+sinter Organization:5:member Organization:7:member
+sinter Organization:6:member Organization:7:member
+sdiff Organization:5:member Organization:6:member
+sdiff Organization:6:member Organization:5:member
+zadd copyrightYear 1996 book:1 2014 book:2 1963 book:3
+zadd copyrightYear 1969 book:4
+zrange copyrightYear 0 -
+zrange copyrightYear 0 -1
+zrange copyrightYear 0 -1 withscores
+zrevrange copyrightYear 0 -1
+zrevrange copyrightYear 0 -1 withscores
+zadd book:names 0 "Into the wild" 0 "Cat's cradle"
+zadd book:names 0 "Time Machine, The" 0 "Gravitys Rainbow"
+zrange book:names 0 -1 withscores
+zrank copyrightYear book:3
+zrank copyrightYear book:1
+zrank copyrightYear book:55
+zrank copyrightYear book:3
+zscore copyrightYear book:3
+zscore copyrightYear book:1
+zrange copyrightYear 0 -1 withscores
+zcount copyrightYear 1900 1970
+zrangebyscore copyrightYear 1900 1970 withscores
+zrangebyscore copyrightYear -inf 2000 withscores
+zrangebyscore copyrightYear 1998 +inf withscores
+set movie:1 "Blade Runner"
+hset movie:2 name "Star Wars"
+sadd movie:3 "2001 Odisseia no Espaço"
+setbit movie:UserPlays:2014-12-11 2 1
+getbit movie:UserPlays:2014-12-11 2
+bitcount movie:UserPlays:2014-12-11
+bitpos movie:UserPlays:2014-12-11 1
+bitpos movie:UserPlays:2014-12-11 0
+exit

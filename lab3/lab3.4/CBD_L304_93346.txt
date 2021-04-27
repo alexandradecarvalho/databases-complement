@@ -1,0 +1,231 @@
+// NMEC : 93346
+
+> create keyspace library with replication={'class': 'SimpleStrategy', 'replication_factor':1};
+
+> use library;
+
+> create table author(email text primary key, name text, country text);
+
+> create table book(isbn bigint primary key, title text, author text, publishing_year int, category list<text>);
+
+> create table publishing(id int primary key, book text, author text, publishing_year int);
+
+> create table loan(id int primary key, customer int, books set<text>, loan_date timestamp);
+
+> create table customer ( id int primary key, name text, email text, address map<text, timestamp>);
+
+> describe columnfamilies;
+
+> insert into author(email, name, country) values ('will.shakespeare@gmail.com', 'William Shakespeare', 'United Kingdom');
+
+> insert into author(email, name, country) values ('seuss@gmail.com', 'Dr. Seuss', 'United States of America');
+
+> insert into author(email, name, country) values ('g.simenon@gmail.com', 'Georges Simenon', 'Belgium');
+
+> insert into author(email, name, country) values ('oodaa@gmail.com', 'Eiichiro Oda', 'Japan');
+
+> insert into author(email, name, country) values ('leotoy@gmail.com', 'Leo Tolstoy', 'Russia');
+
+> insert into author(email, name, country) values ('corrin@gmail.com', 'Corin Tellado', 'Spain');
+
+> insert into author(email, name, country) values ('coelho-paulo@gmail.com', 'Paulo Coelho', 'Brazil');
+
+> insert into author(email, name, country) values ('rene.g@gmail.com', 'René Goschinny', 'France');
+
+> insert into author(email, name, country) values ('jinyong@gmail.com', 'Jin Yong', 'China');
+
+> insert into author(email, name, country) values ('karlmaynot@gmail.com', 'Karl May', 'Germany');
+
+> insert into author(email, name, country) values ('haileymanofficial@gmail.com', 'Arthur Hailey', 'Canada');
+
+> insert into author(email, name, country) values ('astarisborn@gmail.com', 'Astrid Lindgren', 'Sweden');
+
+> insert into author(email, name, country) values ('will.i.am.smith@gmail.com', 'Wilbur Smith', 'South Africa');
+
+> insert into author(email, name, country) values ('hh-author@gmail.com', 'Hermann Hesse', 'Swiss');
+
+> select json * from author;
+
+> insert into book(isbn, title, author, publishing_year, category) values (9780132546812, 'Hamlet', 'William Shakespeare', 1954, ['Tragedy', 'Drama']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9780237285432, 'Macbeth', 'William Shakespeare', 1821, ['Tragedy']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9788404013871, 'Te Odio Por Ser De Otro', 'Corin Tellado', 1973, ['Fiction', 'Romance', 'Contemporary', 'Love']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9788466305792, 'Boda Clandestina', 'Corin Tellado', ['Romance', 'Love']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9781421536255, 'One Piece: East Blue 1-2-3', 'Eiichiro Oda', 2009, ['Anime', 'Adventyre', 'Fantasy', 'Comedy', 'Action']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9780847930449, 'Sidarta', 'Hermann Hesse', 1951, ['Romance', 'Philosophy']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9780030818516, 'The Glass Bead Game', 'Hermann Hesse', 1969, ['Romance', 'Sci-Fi', 'Philosophy', 'Fantasy']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9780312278236, 'Warlock', 'Willbur Smith', 2001, ['Fiction', 'History', 'Adventure']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9780312157913, 'Birds Of Prey', 'Willbur Smith', 1997, ['Fiction', 'History', 'Adventure', 'Maritime']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9780758328007, 'War And Peace', 'Leo Tolstoy', 1949, ['Romance', 'History', 'Love', 'Fiction', 'Philosophy', 'Novel', 'War']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9780075536321, 'Anna Karenina', 'Leo Tolstoy', 1950, ['Romance', 'Realism', 'History', 'Fiction']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9789027446527, 'Winnetou', 'Karl May', 1975, ['Fiction']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9783934826342, 'The Son of Bear Hunter', 'Karl May', 1895, ['Fiction']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9788475100265, 'Asterix', 'René Goschinny', 1961, ['Comedy', 'Satire']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9789724130071, 'Iznogoud', 'René Goschinny', 2002, ['Comedy', 'Animation']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9780140020274, 'The Carter Of La Providence', 'Georges Simenon', 1963, ['History', 'Police', 'Mistery']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9780394900018, 'Cat In The Hat', 'Dr. Seuss', 1957, ['Children', 'Illustration', 'Fiction']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9780140309577, 'Pippi Longstocking', 'Astrid Lindgren', 1950, ['Children', 'Fiction']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9780062502667, 'The Alchemist', 'Paulo Coelho', 1993, ['Romance', 'Drama', 'Quest', 'Fantasy', 'Literature', 'Adventure', 'Fiction']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9780385041393, 'Airport', 'Arthur Hailey', 1968, ['Romance','Love'  'Fiction']);
+
+> insert into book(isbn, title, author, publishing_year, category) values (9783548028415, 'Hotel', 'Arthur Hailey', 1966, ['Romance','Love', 'Fiction', 'Suspense']);
+
+> select json * from book;
+
+> insert into publishing (id, book, author, publishing_year) values (1, 'One Piece: East Blue 1-2-3', 'Eiichiro Oda', 2009);
+
+> insert into publishing (id, book, author, publishing_year) values (2, 'Anna Karenina', 'Leo Tolstoy', 1950);
+
+> insert into publishing (id, book, author, publishing_year) values (3, 'Asterix', 'René Goschinny', 1961);
+
+> insert into publishing (id, book, author, publishing_year) values (4, 'Pippi Longstocking', 'Astrid Lindgren', 1950);
+
+> insert into publishing (id, book, author, publishing_year) values (5, 'The Alchemist', 'Paulo Coelho', 1993);
+
+> insert into publishing (id, book, author, publishing_year) values (6, 'Winnetou', 'Karl May', 1975);
+
+> insert into publishing (id, book, author, publishing_year) values (7, 'Cat In The Hat', 'Dr. Seuss', 1957);
+
+> insert into publishing (id, book, author, publishing_year) values (8, 'The Carter Of La Providence', 'Georges Simenon', 1963);
+
+> insert into publishing (id, book, author, publishing_year) values (9, 'The Glass Bead Game', 'Hermann Hesse', 1969);
+
+> insert into publishing (id, book, author, publishing_year) values (10, 'Warlock', 'Willbur Smith', 2001);
+
+> insert into publishing (id, book, author, publishing_year) values (11, 'Boda Clandestina', 'Corin Tellado', 2002);
+
+> insert into publishing (id, book, author, publishing_year) values (12, 'Iznogoud', 'René Goschinny', 2002);
+
+> insert into publishing (id, book, author, publishing_year) values (14, 'Hotel', 'Arthur Hailey', 1966);
+
+> insert into publishing (id, book, author, publishing_year) values (13, 'Macbeth', 'William Shakespeare', 1821);
+
+> insert into publishing (id, book, author, publishing_year) values (15, 'War And Peace', 'Leo Tolstoy', 1949);
+
+> insert into publishing (id, book, author, publishing_year) values (16, 'Airport', 'Arthur Hailey', 1968);
+
+> insert into publishing (id, book, author, publishing_year) values (17, 'Birds Of Prey', 'Willbur Smith', 1997);
+
+> insert into publishing (id, book, author, publishing_year) values (18, 'The Son of Bear Hunter', 'Karl May', 1895);
+
+> insert into publishing (id, book, author, publishing_year) values (19, 'Hamlet', 'William Shakespeare', 1954);
+
+> insert into publishing (id, book, author, publishing_year) values (20, 'Te Odio Por Ser De Otro', 'Corin Tellado', 1973);
+
+> insert into publishing (id, book, author, publishing_year) values (21, 'The Heaven Sword And Dragon Saber', 'Jin Yong', 1976);
+
+> insert into publishing (id, book, author, publishing_year) values (22, 'Sidarta', 'Hermann Hesse', 1951);
+
+> select json * from publishing;
+
+> insert into customer(id, name, email, address) values(1, 'Mateus Lima', 'matacali98@gmail.com', {'Rua de Sesimbra': dateof(now())});
+
+> insert into customer(id, name, email, address) values(2, 'Catarina Magalhães', 'anacatarinamagalhaes98@gmail.com', {'Rua Ovos Moles, Cacia': dateof(now())});
+
+> insert into customer(id, name, email, address) values(3, 'Bruna Branco', 'brunabranco@gmail.com', {'Rua da Neve, Aveiro': dateof(now())});
+
+> insert into customer(id, name, email, address) values(4, 'Rita Miranda', 'ritx@gmail.com', {'Rua da Barra, Ílhavo': dateof(now())});
+
+> insert into customer(id, name, email, address) values(5, 'Joana Batista', 'joanabatista@gmail.com', {'Avenida do Carvalhido, Porto': dateof(now())});
+
+> insert into customer(id, name, email, address) values(6, 'Mariana Soares', 'mariesoares@gmail.com', {'Rua da Praia do Surf, São Miguel': dateof(now())});
+
+> insert into customer(id, name, email, address) values(7, 'Luis Lisboa', 'mrluislisboner@gmail.com', {'Rua do Tomé, Viseu': dateof(now())});
+
+> insert into customer(id, name, email, address) values(8, 'Maria Beatriz Candeias', 'mbcandeias@gmail.com', {'Rua do Alentejo, Safara': dateof(now())});
+
+> insert into customer(id, name, email, address) values(9, 'Ana Malta de Carvalho', 'maltezers@gmail.com', {'São Paio De Oleiros': dateof(now())});
+
+> insert into customer(id, name, email, address) values(10, 'Catarina Lopes', 'cat@gmail.com', {'São Nunca A Tarde': dateof(now())});
+
+> select json * from customer;
+
+> insert into loan(id, customer, books, loan_date) values (1, 10, {'Asterix'}, dateof(now()));
+
+> insert into loan(id, customer, books, loan_date) values (2, 6, {'Hotel', 'One Piece: East Blue 1-2-3'}, dateof(now()));
+
+> insert into loan(id, customer, books, loan_date) values (4, 10, {'Warlock', 'The Alchemist', 'Te Odio Por Ser De Otro'}, dateof(now()));
+
+> insert into loan(id, customer, books, loan_date) values (5, 6, {'Asterix', 'The Glass Bead Game'}, dateof(now()));
+
+> insert into loan(id, customer, books, loan_date) values (6, 10, {'Warlock'}, dateof(now()));
+
+> insert into loan(id, customer, books, loan_date) values (7, 1, {'The Alchemist', 'One Piece: East Blue 1-2-3'}, dateof(now()));
+
+> insert into loan(id, customer, books, loan_date) values (3, 1, {'Boda Clandestina', 'The Alchemist', 'One Piece: East Blue 1-2-3'}, dateof(now()));
+
+> insert into loan(id, customer, books, loan_date) values (9, 11, {'Sidarta', 'Cat In The Hat', 'Pippy Longstocking'}, dateof(now()));
+
+> insert into loan(id, customer, books, loan_date) values (10, 2, {'Hamlet', 'Macbeth'}, dateof(now()));
+
+> insert into loan(id, customer, books, loan_date) values (8, 4, {'War And Peace', 'Anna Karenina'}, dateof(now()));
+
+> insert into loan(id, customer, books, loan_date) values (11, 5, {'Airport', 'The Son of Bear Hunter'}, dateof(now()));
+
+> insert into loan(id, customer, books, loan_date) values (12, 9, {'Iznogoud', 'The Son of Bear Hunter', 'The Carter Of La Providence'}, dateof(now()));
+
+> insert into loan(id, customer, books, loan_date) values (13, 7, {'Iznogoud', 'Winnetou', 'The Carter Of La Providence', 'Warlock'}, dateof(now()));
+
+> select json * from loan;
+
+> create index on book(author);
+
+> create index on publishing(book);
+
+> create index on publishing(author);
+
+> update author set country='Switzerland' where email='hh-author@gmail.com';
+
+> update book set category=['Anime', 'Adventure', 'Fantasy', 'Comedy', 'Action'] where isbn=9781421536255;
+
+> update loan set books= books + {'Boda Clandestina'} where id=4;
+
+> update customer set address=address + {'Rua Borba': dateof(now())} where id=9;
+
+> update customer set email='ritamirandaa@gmail.com' where id=4;
+
+> delete country from author where email='will.i.am.smith@gmail.com';
+
+> delete category[4] from book where isbn=9780062502667;
+
+> delete author from publishing where id=3;
+
+> delete books from loan where id=6;
+
+> delete name from customer where id=5;
+
+> delete address['Avenida do Carvalhido, Porto'] from customer where id=5;
+
+> select * from book where author = 'William Shakespeare';
+
+> select * from publishing where author = 'Hermann Hesse';
+
+> select * from publishing where book = 'The Alchemist';
+
+> select category from book where isbn = 9780758328007;
+
+> select * from loan where customer = 10 limit 1 allow filtering;
+
+> select * from book where author = 'René Goschinny' and publishing_year > 2000 allow filtering;
+
+> select * from customer limit 10;
+
+> select * from author where email in ('will.shakespeare@gmail.com', 'will.i.am.smith@gmail.com');

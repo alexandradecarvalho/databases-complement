@@ -1,0 +1,104 @@
+// NMEC: 93346
+
+// Criando Keyspace com nome cbd e escolhendo o tipo de replicação de entre 3 tipos: SimpleStrategy (o mesmo fator de replicação simples para o cluster todo) ou NetworkTopologyStrategy (definir um fator de replicação específico para cada um dos datacenters) 
+> create keyspace cbd with replication = {'class':'SimpleStrategy','replication_factor':3};
+
+// Listando todos os Keyspaces existentes
+> describe keyspaces;
+
+// Criando keyspace com durable writes = false
+> create keyspace test with replication = {'class' : 'NetworkTopologyStrategy', 'datacenter1' : 3} and durable_writes = false;
+
+// Verificando durable_writes nos meus keyspaces
+> select * from system_schema.keyspaces;
+
+// Usando um keyspace existente
+> use cbd;
+
+// Alterando replication_factor do keyspace 
+> alter keyspace test with replication = {'class' : 'NetworkTopologyStrategy', 'replication_factor' : 3};
+
+// Alterando durable_writes do keyspace
+> alter keyspace test with replication = {'class' : 'NetworkTopologyStrategy', 'datacenter1' : 3} and durable_writes = true;
+
+// Eliminando um keyspace
+> drop keyspace test;
+
+// Criando uma tabela, especificando as suas colunas e o respetivo tipo, e ainda a primary key
+> create table employee( id int primary key, name text, city text, salary varint, phone varint );
+
+// Selecionando uma tabela
+> select * from employee;
+
+// Adicionando uma coluna à tabela
+> alter table employee add email text;
+
+// Removendo uma coluna da tabela
+> alter table employee drop name;
+
+// Eliminando uma tabela
+> drop table employee;
+
+// Verificando tabelas
+> describe columnfamilies;
+
+// Truncando uma tabela (apaga todas as suas linhas)
+> truncate employee;
+
+// Criando indexes numa tabela
+> create index email on employee (email);
+
+// Eliminando um índex
+> drop index email;
+
+// Criando dados numa tabela (C de CRUD - Create)
+> insert into employee (id, city, email, name, phone, salary) values (1,'Porto', 'jorge@ua.pt', 'Jorge', 934465200, 5000);
+
+// Lendo dados da tabela (R de CRUD - Read)
+> select * from employee;
+
+// Lendo apenas algumas colunas da tabela (R de CRUD - Read)
+> select name, salary from employee;
+
+// Lendo apenas alguns valores da tabela (R de CRUD - Read) [por questões de performance criar um index antes]
+> create index on employee(salary);
+> select * from employee where salary=500;
+
+// Alterar valores na tabela (U de CRUD - Update)
+> update employee set city='Maia' where id=3;
+
+// Eliminando um coluna para um valor
+> delete salary from employee where id=3;
+
+// Eliminando uma linha completa da tabela
+> delete from employee where id=3;
+
+// Criando uma tabela com uma lista
+> create table data(name text primary key, email list<text>);
+
+// Inserindo dados numa tabela com lista
+> insert into data (name, email) values ('Jorge', ['jorgito@ua.pt', 'jorgedacunha@ua.pt'])
+
+// Alterando a lista de uma tabela
+> update data set email = email +['jorgex@gmail.com'] where name = 'Jorge';
+
+// Criando uma tabela com um set
+> create table data2 (name text primary key, phone set<varint>);
+
+// Inserindo dados numa tabela com um set
+> insert into data2 (name, phone) values ('Francisco', {914023090, 229487019});
+
+// Alterando o set de uma tabela
+> update data2 set phone = phone + {984748201} where name = 'Francisco';
+
+// Criando uma tabela com um mapa (usando também uma variável do tipo timestamp)
+> create table data3 (name text primary key, address map<timestamp, text>)
+
+// Inserindo dados numa tabela com um mapa e chamando a função dateof(now()) para obter o timestamp atual
+> insert into data3 (name, address) values ('Maria do Céu', {dateof(now()): 'Bragança'});
+
+// Alterando o mapa de uma tabela
+> update data3 set address = address +{dateof(now()): 'Maia'} where name = 'Maria do Céu';
+
+// Utilizando time to live
+> insert into employee (id, city, email, name, phone, salary) values (3, 'Paris', 'marieouioui@ua.pt', 'Marie', 212847464, 50000) using ttl 40;

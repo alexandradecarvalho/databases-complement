@@ -1,0 +1,47 @@
+// NMEC : 93346
+
+#1
+MATCH (u:User)
+RETURN u
+
+#2
+MATCH (u:User)
+RETURN u.real_name
+
+
+#3
+MATCH ()-[r:COMMITED]->(project:Project)
+WITH project, count(r) as num_participations
+WHERE num_participations >= 1
+RETURN project.project_name as project
+
+
+#4
+MATCH (u:User)-[r:COMMITED]->()
+WITH u, count(r) as num_projects
+RETURN u, num_projects
+
+
+#5
+MATCH (u:User)-[r:COMMITED]->()
+WITH u, count(r) as num_projects
+RETURN u, num_projects
+ORDER BY num_projects DESC
+
+#6
+MATCH ()-[r:COMMITED]->(project:Project)
+WITH project, count(r) as member_counter
+RETURN project, member_counter
+
+#7
+MATCH ()-[r:COMMITED]->(project:Project)
+WITH project, count(r.role_on_project = "Committer") as rel_counter
+RETURN project, rel_counter
+
+#8
+MATCH (atm:User {svn_id:"atm"})-[:COMMITED]->(project:Project)<-[:COMMITED]-(u:User)
+RETURN atm.real_name, u.real_name, project.project_name
+
+#9
+MATCH (atm:User {svn_id:"atm"})-[:COMMITED {role_on_project: "PMC"}]->(project:Project)<-[:COMMITED {role_on_project: "Committer"}]-(u:User)
+RETURN u

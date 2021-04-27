@@ -1,0 +1,10 @@
+{"event_id": 9, "email": "ritaamirandaa@gmail.com", "event_date": "2020-12-19 12:19:59.735Z", "event_time": 21.54, "type": "play", "video_id": 20}
+{"event_id": 4, "email": "catarinamagalhaes@gmail.com", "event_date": "2020-12-19 12:14:55.354Z", "event_time": 4.38, "type": "pause", "video_id": 11}
+{"event_id": 7, "email": "branco@gmail.com", "event_date": "2020-12-19 12:17:46.419Z", "event_time": 6.41, "type": "play", "video_id": 8}
+{"event_id": 8, "email": "martinss@gmail.com", "event_date": "2020-12-19 12:18:48.081Z", "event_time": 42.44, "type": "pause", "video_id": 8}
+{"event_id": 6, "email": "branco@gmail.com", "event_date": "2020-12-19 12:16:29.128Z", "event_time": 12.51, "type": "play", "video_id": 6}
+{"event_id": 10, "email": "mrluislisboa@gmail.com", "event_date": "2020-12-19 12:20:47.831Z", "event_time": 9.00, "type": "stop", "video_id": 17}
+{"event_id": 5, "email": "martinss@gmail.com", "event_date": "2020-12-19 12:15:40.850Z", "event_time": 28.20, "type": "stop", "video_id": 1}
+{"event_id": 2, "email": "matacali18@gmail.com", "event_date": "2020-12-19 12:12:28.036Z", "event_time": 19.35, "type": "pause", "video_id": 1}
+{"event_id": 3, "email": "mel@gmail.com", "event_date": "2020-12-19 12:13:13.892Z", "event_time": 11.44, "type": "pause", "video_id": 18}
+{"event_id": 1, "email": "emiliaventura@gmail.com", "event_date": "2020-12-19 12:11:10.857Z", "event_time": 17.48, "type": "pause", "video_id": 2}

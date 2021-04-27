@@ -1,0 +1,42 @@
+// NMEC : 93346
+
+// Criar um nó chamado node_sample
+CREATE (node_sample);
+
+// Verificar a criação do nó 
+MATCH (n) RETURN n;
+
+// Criar o nó "sample2" e o nó "sample3" em simultâneo
+CREATE (sample2), (sample3);
+
+// Criar o nó chamado "Alexandra" com a label "student"
+CREATE (Alexandra:student)
+
+//  Criar o nó chamado "Margarida" com as labels "student" e "person"
+CREATE (Margarida:person:student);
+
+// Criar o nó Gonçalo com as propriedades nome e localidade
+CREATE (Gonçalo:person{name:"Gonçalo", localidade: "Olival"})
+
+// Criar um nó e devolvê-lo
+CREATE (Cidália:person{name:"Cidália", localidade: "Mafamude"}) RETURN Cidália
+
+// Criar uma relação entre os novos nós Joaquim e Gabriel
+CREATE (Joaquim) - [r:pai_de] -> (Gabriel);
+
+// Criar uma relação entre os nós já existentes Olival e Alexandra
+MATCH (a: local), b(:student) WHERE a.name = "Olival" AND b.name = "Alexandra"
+CREATE (a)-[r: local_de]->(b) 
+RETURN a,b
+
+// Criar uma relação com uma label
+MATCH (a:local), (b:student) WHERE a.name = "Olival" AND b.name = "Alexandra" 
+CREATE (a)-[r:local_de {since:2000}]->(b)  
+RETURN a,b 
+
+// Criar um path completo
+CREATE p = (Emília {nome:"Emília", localidade:"Amarante"})-[:mae_de]->
+   (Cidália {nome:"Cidália", localidade:"Mafamude"})[:mae_de]->(Alexandra {nome:"Alexandra", localidade: "Mafamude"}) 
+RETURN p 
+
+
